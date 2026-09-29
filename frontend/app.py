@@ -1,8 +1,10 @@
 import streamlit as st
 import requests
+import os
+
 
 # =========================================================
-# PAGE CONFIG
+# CONFIGURATION
 # =========================================================
 
 st.set_page_config(
@@ -11,57 +13,68 @@ st.set_page_config(
     layout="wide"
 )
 
+
+# =========================================================
+# API CONFIGURATION
+# =========================================================
+
+API_URL = os.getenv(
+    "API_URL",
+    "https://mpg-predicter-backend-n1rodm7va-rat7050s-projects.vercel.app"
+)
+
+PREDICT_URL = f"{API_URL}/predict"
+
+
 # =========================================================
 # CUSTOM CSS
 # =========================================================
 
-st.markdown("""
-<style>
+st.markdown(
+    """
+    <style>
 
-.stApp {
-    background-color: #f5f7fb;
-}
+    .stApp {
+        background-color: #f5f7fb;
+    }
 
-/* Main title */
-.main-title {
-    font-size: 44px;
-    font-weight: 800;
-    color: #172033;
-    margin-bottom: 5px;
-}
+    .main-title {
+        font-size: 44px;
+        font-weight: 800;
+        color: #172033;
+        margin-bottom: 5px;
+    }
 
-/* Subtitle */
-.subtitle {
-    font-size: 18px;
-    color: #687386;
-    margin-bottom: 30px;
-}
+    .subtitle {
+        font-size: 18px;
+        color: #687386;
+        margin-bottom: 30px;
+    }
 
-/* Section title */
-.section-title {
-    font-size: 26px;
-    font-weight: 700;
-    color: #172033;
-}
+    .section-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #172033;
+    }
 
-/* Prediction metric */
-[data-testid="stMetric"] {
-    background-color: #eef8f2;
-    padding: 18px;
-    border-radius: 12px;
-}
+    [data-testid="stMetric"] {
+        background-color: #eef8f2;
+        padding: 18px;
+        border-radius: 12px;
+    }
 
-/* Button */
-div.stButton > button {
-    width: 100%;
-    height: 48px;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-}
+    div.stButton > button {
+        width: 100%;
+        height: 48px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+    }
 
-</style>
-""", unsafe_allow_html=True)
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # =========================================================
@@ -85,11 +98,14 @@ st.markdown(
 # MAIN COLUMNS
 # =========================================================
 
-left, right = st.columns(2, gap="large")
+left, right = st.columns(
+    2,
+    gap="large"
+)
 
 
 # =========================================================
-# VEHICLE INFORMATION
+# VEHICLE INPUT
 # =========================================================
 
 with left:
@@ -119,7 +135,7 @@ with left:
 
         st.write("")
 
-        predict = st.button(
+        predict_button = st.button(
             "🚀 Predict MPG"
         )
 
@@ -141,17 +157,26 @@ with right:
 
         st.write("")
 
-        if predict:
+        if predict_button:
 
             try:
 
-               response = requests.post(
-                    "https://mpg-predicter-backend-n1rodm7va-rat7050s-projects.vercel.app/predict",
-                     params={
-                             "horsepower": horsepower
-                             }
-                  )
+                # --------------------------------------------------
+                # API REQUEST
+                # --------------------------------------------------
+
+                response = requests.post(
+                    PREDICT_URL,
+                    params={
+                        "horsepower": horsepower
+                    },
+                    timeout=30
                 )
+
+
+                # --------------------------------------------------
+                # SUCCESS
+                # --------------------------------------------------
 
                 if response.status_code == 200:
 
@@ -175,22 +200,60 @@ with right:
                         f"{horsepower:.0f} HP"
                     )
 
+
+                # --------------------------------------------------
+                # API ERROR
+                # --------------------------------------------------
+
                 else:
 
+                    try:
+
+                        error_data = response.json()
+
+                        error_message = error_data.get(
+                            "detail",
+                            "Unknown API error"
+                        )
+
+                    except Exception:
+
+                        error_message = response.text
+
+
                     st.error(
-                        "Prediction failed. Please try again."
+                        f"Prediction failed: {error_message}"
                     )
+
+
+            # ------------------------------------------------------
+            # CONNECTION ERROR
+            # ------------------------------------------------------
+
+            except requests.exceptions.Timeout:
+
+                st.error(
+                    "⏱️ API request timed out."
+                )
+
 
             except requests.exceptions.ConnectionError:
 
                 st.error(
-                    "⚠️ Backend API is not running."
+                    "❌ Could not connect to the FastAPI backend."
                 )
 
                 st.info(
-                    "Start the backend first:\n\n"
-                    "`uvicorn backend.main:app --reload`"
+                    "Please check whether the Vercel API is running."
                 )
+
+
+            except Exception as e:
+
+                st.error(
+                    f"Unexpected error: {str(e)}"
+                )
+
 
         else:
 
@@ -201,7 +264,7 @@ with right:
 
 
 # =========================================================
-# ABOUT MODEL
+# MODEL INFORMATION
 # =========================================================
 
 st.write("")
@@ -218,14 +281,16 @@ st.markdown(
 st.write("")
 
 
+col1, col2, col3 = st.columns(
+    3,
+    gap="medium"
+)
+
+
 # =========================================================
-# MODEL INFORMATION
+# MODEL
 # =========================================================
 
-col1, col2, col3 = st.columns(3, gap="medium")
-
-
-# Model
 with col1:
 
     with st.container(border=True):
@@ -237,7 +302,10 @@ with col1:
         )
 
 
-# Input
+# =========================================================
+# INPUT
+# =========================================================
+
 with col2:
 
     with st.container(border=True):
@@ -249,7 +317,10 @@ with col2:
         )
 
 
-# Output
+# =========================================================
+# OUTPUT
+# =========================================================
+
 with col3:
 
     with st.container(border=True):
@@ -262,6 +333,38 @@ with col3:
 
 
 # =========================================================
+# API INFORMATION
+# =========================================================
+
+st.write("")
+st.write("")
+
+st.markdown(
+    '<div class="section-title">'
+    '🌐 API Information'
+    '</div>',
+    unsafe_allow_html=True
+)
+
+st.write("")
+
+st.code(
+    API_URL,
+    language="text"
+)
+
+st.markdown(
+    f"""
+    **API Documentation:**  
+    `{API_URL}/docs`
+
+    **Health Check:**  
+    `{API_URL}/health`
+    """
+)
+
+
+# =========================================================
 # FOOTER
 # =========================================================
 
@@ -269,5 +372,6 @@ st.write("")
 st.write("")
 
 st.caption(
-    "Built with Python • FastAPI • Streamlit • Scikit-learn"
+    "Built with Python • FastAPI • Streamlit • "
+    "Scikit-learn • Polynomial Regression"
 )
