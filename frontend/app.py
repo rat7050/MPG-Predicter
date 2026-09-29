@@ -146,7 +146,7 @@ with right:
             try:
 
                 response = requests.post(
-                    "http://127.0.0.1:8000/predict",
+                    "https://mpg-predicter-backend-n1rodm7va-rat7050s-projects.vercel.app/predict",
                     params={
                         "horsepower": horsepower
                     }
