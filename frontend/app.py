@@ -145,11 +145,12 @@ with right:
 
             try:
 
-                response = requests.post(
+               response = requests.post(
                     "https://mpg-predicter-backend-n1rodm7va-rat7050s-projects.vercel.app/predict",
-                    params={
-                        "horsepower": horsepower
-                    }
+                     params={
+                             "horsepower": horsepower
+                             }
+                  )
                 )
 
                 if response.status_code == 200:
