@@ -6,8 +6,10 @@ The project demonstrates an end-to-end Machine Learning workflow, from data prep
 
 ---
 
-## 📸 Demo
-
+## 📸 Live Preview 
+```text
+https://mpg-predicter.streamlit.app/
+```
 ### 🚗 MPG Predictor — Streamlit Application
 
 <img width="1916" height="841" alt="Image" src="https://github.com/user-attachments/assets/a04a87d5-931a-4e42-8c11-204cba52b33b" />
@@ -542,7 +544,7 @@ uvicorn backend.main:app --reload
 The backend will run at:
 
 ```text
-http://127.0.0.1:8000
+https://mpg-predicter-backend-n1rodm7va-rat7050s-projects.vercel.app
 ```
 
 ### FastAPI Documentation
@@ -550,7 +552,7 @@ http://127.0.0.1:8000
 Open:
 
 ```text
-http://127.0.0.1:8000/docs
+https://mpg-predicter-backend-n1rodm7va-rat7050s-projects.vercel.app/docs
 ```
 
 The Swagger UI allows you to test the prediction API directly from your browser.
@@ -572,7 +574,7 @@ Streamlit will display the local application URL in the terminal.
 Usually:
 
 ```text
-http://localhost:8501
+https://mpg-predicter.streamlit.app/
 ```
 
 ---
