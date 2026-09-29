@@ -10,7 +10,7 @@ The project demonstrates an end-to-end Machine Learning workflow, from data prep
 
 ### 🚗 MPG Predictor — Streamlit Application
 
-![MPG Predictor Demo]("C:\Users\ratne\Pictures\Screenshots\Screenshot 2026-09-29 171221.png")
+<img width="1916" height="841" alt="Image" src="https://github.com/user-attachments/assets/a04a87d5-931a-4e42-8c11-204cba52b33b" />
 
 > Enter the vehicle's horsepower and click **Predict MPG** to get the estimated fuel efficiency.
 
